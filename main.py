@@ -1,7 +1,7 @@
 """
 Лабораторная работа №4: Реализация моделей принятия коллективных решений
-Предметная область: Выбор типа совместного путешествия
-Варианты: "Пляжный", "Городской", "Спортивный"
+Предметная область: Выбор совместного места отдыха (вариант №3 из ТЗ)
+Варианты: "Крым", "Сочи", "Алтай"
 """
 
 import tkinter as tk
@@ -12,7 +12,7 @@ from tkinter import ttk, messagebox
 # МОДЕЛИ ПРИНЯТИЯ РЕШЕНИЙ
 # ======================
 
-VARIANTS = ["Пляжный", "Городской", "Спортивный"]
+VARIANTS = ["Крым", "Сочи", "Алтай"]  # Популярные места отдыха в РФ
 
 
 def plurality_vote(ranks):
@@ -20,7 +20,7 @@ def plurality_vote(ranks):
     first_choices = [rank[0] for rank in ranks]
     counts = {v: first_choices.count(v) for v in VARIANTS}
     winner = max(counts, key=counts.get)
-    explanation = f"Победил «{winner}», так как получил наибольшее число первых мест: {counts[winner]} из {len(ranks)}."
+    explanation = f"Победило место «{winner}», так как получило наибольшее число первых мест: {counts[winner]} из {len(ranks)}."
     return winner, explanation, counts
 
 
@@ -55,7 +55,7 @@ def condorcet_winner(ranks):
                 wins_all = False
                 break
         if wins_all:
-            explanation = f"«{v}» — явный победитель по Кондорсе: выигрывает у всех остальных в прямых сравнениях."
+            explanation = f"«{v}» — явный победитель по Кондорсе: предпочтительнее любого другого места в прямом сравнении."
             return v, explanation
     return None, "Явного победителя по Кондорсе нет: цикл предпочтений или паритет."
 
@@ -80,7 +80,7 @@ def copeland_score(ranks):
         scores[v] = score
 
     winner = max(scores, key=scores.get)
-    explanation = f"По правилу Копленда победил «{winner}» с баллом {scores[winner]} (разница побед и поражений в парных сравнениях)."
+    explanation = f"По правилу Копленда победило место «{winner}» с баллом {scores[winner]} (разница побед и поражений в парных сравнениях)."
     return winner, explanation, scores
 
 
@@ -98,7 +98,7 @@ def simpson_score(ranks):
 
     winner = max(min_wins, key=min_wins.get)
     explanation = (
-        f"По правилу Симпсона победил «{winner}», так как его наихудший результат в парных сравнениях — "
+        f"По правилу Симпсона победило место «{winner}», так как его наихудший результат в парных сравнениях — "
         f"{min_wins[winner]} голосов, что выше, чем у других."
     )
     return winner, explanation, min_wins
@@ -114,7 +114,7 @@ def borda_count(ranks):
             scores[variant] += points[pos]
 
     winner = max(scores, key=scores.get)
-    explanation = f"По модели Борда победил «{winner}» с суммой баллов {scores[winner]}."
+    explanation = f"По модели Борда победило место «{winner}» с суммой баллов {scores[winner]}."
     return winner, explanation, scores
 
 
@@ -125,7 +125,7 @@ def borda_count(ranks):
 class TravelVotingApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Выбор путешествия — Коллективное решение")
+        self.root.title("Выбор совместного места отдыха — Коллективное решение")
         self.root.geometry("800x900")
 
         self.voters = []  # список имён участников
@@ -261,7 +261,7 @@ class TravelVotingApp:
         freq = Counter([w for w in methods if w != "(нет)"])
         if freq:
             consensus = freq.most_common(1)[0][0]
-            self.result_text.insert(tk.END, f"Наиболее часто рекомендуемый тип путешествия: «{consensus}»\n")
+            self.result_text.insert(tk.END, f"Рекомендуемое место отдыха для группы: «{consensus}»\n")
 
 
 # ======================
